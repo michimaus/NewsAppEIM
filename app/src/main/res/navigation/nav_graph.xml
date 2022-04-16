@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginScreenFragment">
+
+    <fragment
+        android:id="@+id/loginScreenFragment"
+        android:name="com.example.newsappeim.screens.login_register_ui.login.LoginScreenFragment"
+        android:label="login_screen_fragment"
+        tools:layout="@layout/login_screen_fragment" >
+        <action
+            android:id="@+id/action_loginScreenFragment_to_registerScreenFragment"
+            app:destination="@id/registerScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerScreenFragment"
+        android:name="com.example.newsappeim.screens.login_register_ui.register.RegisterScreenFragment"
+        android:label="register_screen_fragment"
+        tools:layout="@layout/register_screen_fragment" >
+        <action
+            android:id="@+id/action_registerScreenFragment_to_loginScreenFragment"
+            app:destination="@id/loginScreenFragment"
+            app:popUpTo="@id/loginScreenFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+</navigation>

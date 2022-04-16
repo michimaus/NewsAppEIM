@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="recyclerview" type="id"/>
+    <item name="linear_layout" type="id"/>
+    <item name="button_go_to_register" type="id"/>
+    <item name="button_login" type="id"/>
+</resources>
