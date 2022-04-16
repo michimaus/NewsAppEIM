@@ -26,12 +26,15 @@
             android:layout_height="wrap_content"
             app:startIconDrawable="@drawable/ic_round_account_circle_24">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <EditText
+                android:id="@+id/register_username"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
                 android:hint="@string/email"
-                android:textColorHint="#757575"
-                tools:ignore="TouchTargetSizeCheck" />
+                android:inputType="textPersonName"
+                android:textColor="#757575" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -43,7 +46,7 @@
             app:startIconDrawable="@drawable/ic_round_lock_24">
 
             <EditText
-                android:id="@+id/editTextTextPassword4"
+                android:id="@+id/register_password"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -62,7 +65,7 @@
             app:startIconDrawable="@drawable/ic_round_lock_24">
 
             <EditText
-                android:id="@+id/editTextTextPassword5"
+                android:id="@+id/register_repeat_password"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -72,11 +75,12 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:id="@+id/button_sign_up"
+            android:id="@+id/button_register"
             style="@style/Widget.Material3.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sign_up"
+            android:onClick="navigateToMainApp"
+            android:text="@string/register"
             android:textAllCaps="false"
             android:textSize="14sp" />
 

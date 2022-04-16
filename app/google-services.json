@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "859579443287",
+    "project_id": "newsappeim",
+    "storage_bucket": "newsappeim.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859579443287:android:ce52c065574ee3a2821b12",
+        "android_client_info": {
+          "package_name": "com.example.newsappeim"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "859579443287-i4bhi249go1vmj1mvkqic2lv87a63bpr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlBE2JyBCREP3BNidtsrJMKEL4ikHSj54"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "859579443287-i4bhi249go1vmj1mvkqic2lv87a63bpr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

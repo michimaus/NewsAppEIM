@@ -1,13 +1,16 @@
 package com.example.newsappeim.screens.login_register_ui.login
 
+import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.provider.AlarmClock.EXTRA_MESSAGE
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.navigation.fragment.findNavController
+import com.example.newsappeim.MainAppActivity
 import com.example.newsappeim.R
 import com.example.newsappeim.databinding.LoginScreenFragmentBinding
 
@@ -22,6 +25,7 @@ class LoginScreenFragment : Fragment() {
     private lateinit var binding: LoginScreenFragmentBinding
 
     private lateinit var goToRegisterButton: Button
+    private lateinit var loginButton: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,6 +33,7 @@ class LoginScreenFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.login_screen_fragment, container, false)
         goToRegisterButton = view.findViewById<Button>(R.id.button_go_to_register)
+        loginButton = view.findViewById<Button>(R.id.button_login)
         return view;
     }
 
