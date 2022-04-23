@@ -62,7 +62,7 @@
             style="@style/Widget.Material3.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="navigateToMainApp"
+            android:onClick="onActionTriggerNavigateToMainApp"
             android:text="@string/login"
             android:textAllCaps="false"
             android:textSize="14sp" />

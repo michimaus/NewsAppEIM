@@ -3,23 +3,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_hot_news">
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.example.newsappeim.screens.main_app_ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/navigation_latest"
+        android:name="com.example.newsappeim.screens.main_app_ui.latest.LatestFragment"
+        android:label="@string/title_latest"
+        tools:layout="@layout/fragment_latest" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.newsappeim.screens.main_app_ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_hot_news"
+        android:name="com.example.newsappeim.screens.main_app_ui.hot_news.HotNewsFragment"
+        android:label="@string/title_hot_news"
+        tools:layout="@layout/fragment_hot_news" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.example.newsappeim.screens.main_app_ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_new_post"
+        android:name="com.example.newsappeim.screens.main_app_ui.new_post.NewPostFragment"
+        android:label="@string/title_add_post"
+        tools:layout="@layout/fragment_search" />
+
+    <fragment
+        android:id="@+id/navigation_search"
+        android:name="com.example.newsappeim.screens.main_app_ui.search.SearchFragment"
+        android:label="@string/title_search"
+        tools:layout="@layout/fragment_search" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.example.newsappeim.screens.main_app_ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

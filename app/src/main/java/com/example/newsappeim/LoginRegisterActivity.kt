@@ -3,8 +3,6 @@ package com.example.newsappeim
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -27,7 +25,7 @@ class LoginRegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance()
 
         binding = ActivityLoginRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -71,11 +69,15 @@ class LoginRegisterActivity : AppCompatActivity() {
                 || super.onSupportNavigateUp()
     }
 
-    fun navigateToMainApp() {
+    private fun navigateToMainApp() {
         val intent = Intent(this, MainAppActivity::class.java).apply {
             putExtra("EXTRA_MESSAGE", "Buna seara")
         }
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
+    }
+
+    fun onActionTriggerNavigateToMainApp(view: View) {
+        navigateToMainApp()
     }
 }

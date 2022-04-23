@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
+import com.example.newsappeim.LoginRegisterActivity
 import com.example.newsappeim.R
 import com.example.newsappeim.databinding.RegisterScreenFragmentBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -38,12 +39,14 @@ class RegisterScreenFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.register_screen_fragment, container, false)
+
         goToLoginButton = view.findViewById(R.id.button_go_to_register)
         registerButton = view.findViewById(R.id.button_register)
 
         emailTextField = view.findViewById(R.id.register_username)
         passwordTextField = view.findViewById(R.id.register_password)
         repeatPasswordTextField = view.findViewById(R.id.register_repeat_password)
+
         return view;
     }
 
@@ -62,9 +65,10 @@ class RegisterScreenFragment : Fragment() {
 
             mAuth!!.createUserWithEmailAndPassword(newCreatedUserEmail, newCreatedUserPassword).addOnCompleteListener {
                 if (it.isSuccessful) {
-                    Toast.makeText(this.activity, "Successfully Singed Up", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this.activity, "Successfully Registered", Toast.LENGTH_SHORT).show()
+                    (this.activity as LoginRegisterActivity).onActionTriggerNavigateToMainApp(view);
                 } else {
-                    Toast.makeText(this.activity, "Singed Up Failed!! " + it.exception!!.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(this.activity, "Failed!! " + it.exception!!.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }

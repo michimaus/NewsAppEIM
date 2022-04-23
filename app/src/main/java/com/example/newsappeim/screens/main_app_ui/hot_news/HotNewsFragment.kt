@@ -1,4 +1,4 @@
-package com.example.newsappeim.screens.main_app_ui.dashboard
+package com.example.newsappeim.screens.main_app_ui.hot_news
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.newsappeim.databinding.FragmentDashboardBinding
+import com.example.newsappeim.databinding.FragmentHotNewsBinding
 
-class DashboardFragment : Fragment() {
+class HotNewsFragment : Fragment() {
 
-    private var _binding: FragmentDashboardBinding? = null
+    private var _binding: FragmentHotNewsBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -23,12 +23,12 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
+            ViewModelProvider(this).get(HotNewsViewModel::class.java)
 
-        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
+        _binding = FragmentHotNewsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textDashboard
+        val textView: TextView = binding.textHotNews
         dashboardViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
