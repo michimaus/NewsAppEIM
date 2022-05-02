@@ -55,7 +55,7 @@ class LatestFragment : Fragment() {
         }
 
         latestViewModel.latestList.observe(viewLifecycleOwner) {
-            Log.wtf(TAG, it.toString())
+//            Log.wtf(TAG, it.toString())
             newsAdapter.setNewsModelList(it.results);
         }
 
