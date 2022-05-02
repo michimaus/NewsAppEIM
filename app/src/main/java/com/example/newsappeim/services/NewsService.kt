@@ -15,10 +15,8 @@ var TAG: String = "NewsService"
 
 interface NewsService {
 
-    @GET("news?apikey=pub_6783a52d4e171eb4b5981530303223ea168c&country=gb&language=en&category=top")
+    @GET("news?apikey=pub_6783a52d4e171eb4b5981530303223ea168c&country=us&language=en&category=top")
     suspend fun getLatest(): Response<ListOfNewsModel>
-//    suspend fun getLatest(): Call<List<NewsModel>>
-//    suspend fun getLatest(): Response<List<Any>>
 
     companion object {
         var newsService: NewsService? = null

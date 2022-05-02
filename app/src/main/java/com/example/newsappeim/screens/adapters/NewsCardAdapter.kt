@@ -28,6 +28,7 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
     )
 
     var news = mutableListOf<NewsModel>()
+
     fun setNewsModelList(news: List<NewsModel>) {
         this.news = news.toMutableList()
         notifyDataSetChanged()
@@ -61,7 +62,6 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
             holder.binding.chipGroup.addView(chip2)
 
             Log.d(TAG, article.keyWords?.isNotEmpty().toString())
-            Log.d(TAG, "PLM...")
 
             article.keyWords?.forEach {
                 val chipAux = Chip(holder.binding.chipGroup.context)
@@ -80,7 +80,8 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
                 holder.binding.authorsTextView.append("\n \u2022 " + it)
             }
         } else {
-            holder.binding.authorsTextView.visibility = View.GONE
+            holder.binding.authorsTextView.text = "Written by:"
+            holder.binding.authorsTextView.append("\n \u2022 " + "Well known author")
         }
 
         if (article.image_url != null) {

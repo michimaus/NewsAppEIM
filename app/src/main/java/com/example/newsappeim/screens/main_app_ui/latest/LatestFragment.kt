@@ -57,6 +57,7 @@ class LatestFragment : Fragment() {
         latestViewModel.latestList.observe(viewLifecycleOwner) {
 //            Log.wtf(TAG, it.toString())
             newsAdapter.setNewsModelList(it.results);
+            binding.progressBar.visibility = View.GONE
         }
 
         latestViewModel.loading.observe(viewLifecycleOwner) {
