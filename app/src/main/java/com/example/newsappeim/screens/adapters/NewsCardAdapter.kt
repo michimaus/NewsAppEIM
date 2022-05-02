@@ -58,16 +58,24 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
             chip1.text = "#tag1"
             chip2.text = "#tag2"
 
+//            chip1.textSize = 12f
+//            chip2.textSize = 12f
+
+            chip1.shapeAppearanceModel.withCornerSize(16f)
+            chip2.shapeAppearanceModel.withCornerSize(16f)
+
+
             holder.binding.chipGroup.addView(chip1)
             holder.binding.chipGroup.addView(chip2)
 
-            Log.d(TAG, article.keyWords?.isNotEmpty().toString())
+//            Log.d(TAG, article.keyWords?.isNotEmpty().toString())
 
             article.keyWords?.forEach {
                 val chipAux = Chip(holder.binding.chipGroup.context)
 
                 chipAux.chipBackgroundColor = ColorStateList.valueOf(colorsOfChips[rnd.nextInt(colorsOfChips.size)])
                 chipAux.text = "#$it"
+                chipAux.shapeAppearanceModel.withCornerSize(16f)
 
                 holder.binding.chipGroup.addView(chipAux)
             }
