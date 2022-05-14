@@ -1,7 +1,5 @@
 package com.example.newsappeim.services
 
-
-import android.util.Log
 import com.example.newsappeim.data.model.ListOfNewsModel
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -23,8 +21,6 @@ interface NewsService {
         fun getInstance(): NewsService {
             if (newsService == null) {
 
-                Log.wtf(TAG, "we trying...")
-
                 val retrofit = Retrofit
                     .Builder()
                     .baseUrl("https://newsdata.io/api/1/")
@@ -34,6 +30,5 @@ interface NewsService {
             }
             return newsService!!
         }
-
     }
 }

@@ -2,17 +2,18 @@ package com.example.newsappeim.screens.adapters
 
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.util.Log
+import android.os.Build
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.annotation.RequiresApi
 import androidx.core.view.isEmpty
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.example.newsappeim.data.model.NewsModel
+import com.example.newsappeim.data.model.ApiNewsModel
 import com.example.newsappeim.databinding.AdapterNewsBinding
+import com.example.newsappeim.screens.main_app_ui.latest.LatestViewModel
 import com.google.android.material.chip.Chip
 import java.util.*
 
@@ -27,10 +28,12 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
         Color.rgb(190, 174, 226)
     )
 
-    var news = mutableListOf<NewsModel>()
+    private var news = mutableListOf<ApiNewsModel>()
+    private lateinit var newsViewModel: LatestViewModel
 
-    fun setNewsModelList(news: List<NewsModel>) {
-        this.news = news.toMutableList()
+    fun setNewsModelList(apiNews: List<ApiNewsModel>, newsViewModel: LatestViewModel) {
+        this.news = apiNews.toMutableList()
+        this.newsViewModel = newsViewModel
         notifyDataSetChanged()
     }
 
@@ -40,6 +43,7 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
         return MainViewHolder(binding)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val article = news[position]
 
@@ -79,6 +83,10 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
 
                 holder.binding.chipGroup.addView(chipAux)
             }
+        }
+
+        holder.binding.likeButton.setOnClickListener {
+            this.newsViewModel.likePost(article)
         }
 
         if (article.creator?.isNotEmpty() == true) {

@@ -37,7 +37,7 @@ class LoginScreenFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var view = inflater.inflate(R.layout.login_screen_fragment, container, false)
+        val view = inflater.inflate(R.layout.login_screen_fragment, container, false)
 
         goToRegisterButton = view.findViewById<Button>(R.id.button_go_to_register)
         loginButton = view.findViewById<Button>(R.id.button_login)

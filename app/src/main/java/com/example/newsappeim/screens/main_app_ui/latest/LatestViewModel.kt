@@ -1,9 +1,12 @@
 package com.example.newsappeim.screens.main_app_ui.latest
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.newsappeim.data.model.ApiNewsModel
 import com.example.newsappeim.data.model.ListOfNewsModel
 import com.example.newsappeim.repositories.NewsRepository
 import kotlinx.coroutines.*
@@ -24,6 +27,7 @@ class LatestViewModel constructor(private val newsRepository: NewsRepository) : 
     val latestList = MutableLiveData<ListOfNewsModel>()
 
     var job: Job? = null
+    var likeJob: Job? = null
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         onError("Exception handled: ${throwable.localizedMessage}")
@@ -32,10 +36,8 @@ class LatestViewModel constructor(private val newsRepository: NewsRepository) : 
     fun getLatest() {
         job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
 
-            Log.wtf(TAG,"ya ready x111?!")
             loading.postValue(true)
             val response = newsRepository.getLatest()
-            Log.wtf(TAG,"ya ready?!")
 
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
@@ -48,6 +50,17 @@ class LatestViewModel constructor(private val newsRepository: NewsRepository) : 
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun likePost(article: ApiNewsModel) {
+        likeJob = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
+            val response = newsRepository.likePost(article)
+
+            withContext(Dispatchers.Main) {
+
+            }
+        }
+    }
+
     private fun onError(message: String) {
         errorMessage.postValue(message)
         loading.postValue(false)
@@ -56,5 +69,6 @@ class LatestViewModel constructor(private val newsRepository: NewsRepository) : 
     override fun onCleared() {
         super.onCleared()
         job?.cancel()
+        likeJob?.cancel()
     }
 }

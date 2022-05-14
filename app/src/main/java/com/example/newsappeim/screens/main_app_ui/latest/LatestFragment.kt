@@ -5,12 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import com.example.newsappeim.databinding.FragmentLatestBinding
 import com.example.newsappeim.repositories.NewsRepository
 import com.example.newsappeim.screens.adapters.NewsCardAdapter
@@ -27,36 +24,28 @@ class LatestFragment : Fragment() {
     private val binding get() = _binding!!
     lateinit var latestViewModel: LatestViewModel
     private val newsService = NewsService.getInstance()
-    val newsAdapter = NewsCardAdapter()
+    private val newsAdapter = NewsCardAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-//        val newsService = NewsService.getInstance()
-
         latestViewModel =
-            ViewModelProvider(this, LatestViewModelFactory(NewsRepository(newsService))).get(LatestViewModel::class.java)
+            ViewModelProvider(this, LatestViewModelFactory(NewsRepository(newsService)))[LatestViewModel::class.java]
 
         _binding = FragmentLatestBinding.inflate(inflater, container, false)
         val root: View = binding.root
-//        val textView: TextView = binding.textLatest
-//        val adapterNewsBinding: RecyclerView = binding.recyclerview
         binding.recyclerview.adapter = newsAdapter
-
-//        latestViewModel.text.observe(viewLifecycleOwner) {
-//            textView.text = it
-//        }
 
         latestViewModel.errorMessage.observe(viewLifecycleOwner) {
             Log.wtf(TAG, it)
+            binding.progressBar.visibility = View.GONE
             Toast.makeText(this.activity, it, Toast.LENGTH_SHORT).show()
         }
 
         latestViewModel.latestList.observe(viewLifecycleOwner) {
-//            Log.wtf(TAG, it.toString())
-            newsAdapter.setNewsModelList(it.results);
+            newsAdapter.setNewsModelList(it.results, latestViewModel)
             binding.progressBar.visibility = View.GONE
         }
 
@@ -79,14 +68,6 @@ class LatestFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        val newsService = NewsService.getInstance()
-//        val mainRepository = NewsRepository(newsService)
-//        binding.recyclerview.adapter = adapter
-
-//        latestViewModel.latestList.observe(viewLifecycleOwner, {
-//            adapter.setMovies(it)
-//        })
     }
 
     override fun onDestroyView() {

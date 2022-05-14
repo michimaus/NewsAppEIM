@@ -54,7 +54,8 @@
                 android:ems="10"
                 android:hint="@string/password"
                 android:inputType="textPassword"
-                tools:ignore="SpeakableTextPresentCheck" />
+                tools:ignore="SpeakableTextPresentCheck"
+                android:importantForAutofill="no" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
