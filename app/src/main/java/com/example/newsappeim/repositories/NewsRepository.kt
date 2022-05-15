@@ -30,12 +30,8 @@ class NewsRepository constructor(private val newsService: NewsService) {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun convertStringToDate(string: String): Timestamp {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd hh:mm:ss")
-
-        return Timestamp(
-            LocalDateTime.parse(string, formatter).toEpochSecond(ZoneOffset.UTC),
-            LocalDateTime.parse(string, formatter).nano
-        )
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        return Timestamp(LocalDateTime.parse(string, formatter).atOffset(ZoneOffset.UTC).toInstant().epochSecond, 0)
     }
 
     suspend fun getLatest() = newsService.getLatest()
@@ -43,35 +39,34 @@ class NewsRepository constructor(private val newsService: NewsService) {
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun likePost(article: ApiNewsModel) {
 
-        Log.wtf(TAG, "ceva ceva ceva")
 
         fireStore
             .collection("news_to_consider")
             .document(titleToIdProcess(article.title)).get()
             .addOnCompleteListener {
-                Log.wtf(TAG, "ceva ceva we iiiiiiinnnn")
 
                 if (it.isSuccessful) {
+                    val document = it.result
 
-                } else {
-                    Log.wtf(TAG, "ceva ceva cevayeeeeeee")
+                    if (document.exists()) {
+                        Log.wtf(TAG, "aventuraa")
+                    } else {
+                        val fireStoreArticle: FireStoreNewsModel = FireStoreNewsModel(
+                            title = titleToIdProcess(article.title),
+                            link = article.link,
+                            keyWords = article.keyWords,
+                            creator = article.creator,
+                            description = article.description,
+                            content = article.content,
+                            pubDate = convertStringToDate(article.pubDate!!),
+                            image_url = article.image_url,
+                            likes = listOf(fireAuth.currentUser?.email!!),
+                            comments = emptyList()
+                        )
 
-                    val fireStoreArticle: FireStoreNewsModel = FireStoreNewsModel(
-                        title = titleToIdProcess(article.title),
-                        link = article.link,
-                        keyWords = article.keyWords,
-                        creator = article.creator,
-                        description = article.description,
-                        content = article.content,
-                        pubDate = convertStringToDate(article.pubDate!!),
-                        image_url = article.image_url,
-                        likes = listOf(fireAuth.currentUser?.email!!),
-                        comments = emptyList()
-                    )
+                        fireStore.collection("news_to_consider").document(article.title!!).set(fireStoreArticle)
+                    }
 
-                    Log.wtf(TAG, "ceva mrrrrrrrrr")
-
-                    fireStore.collection("news_to_consider").document(article.title!!).set(fireStoreArticle)
                 }
             }
     }
