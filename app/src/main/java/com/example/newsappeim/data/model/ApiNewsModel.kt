@@ -31,9 +31,14 @@ data class FireStoreNewsModel(
     val image_url: String?,
     val likes: List<String>,
     val comments: List<FireStoreNewsCommentModel>,
-)
+) {
+    constructor() : this("", "", emptyList(), emptyList(), "", "", Timestamp.now(), "", emptyList(), emptyList())
+}
 
 data class FireStoreNewsCommentModel(
     val comment: String,
-    val userEmailCommenting: String
-)
+    val userEmailCommenting: String,
+    val pubDate: Timestamp,
+) {
+    constructor() : this("", "", Timestamp.now())
+}
