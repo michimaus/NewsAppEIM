@@ -1,5 +1,6 @@
 package com.example.newsappeim.repositories
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -15,9 +16,11 @@ import kotlinx.coroutines.tasks.await
 import retrofit2.Response
 import java.math.BigInteger
 import java.security.MessageDigest
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class NewsRepository constructor(private val newsService: NewsService) {
 
@@ -36,18 +39,21 @@ class NewsRepository constructor(private val newsService: NewsService) {
         return md5(aux);
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
+    @SuppressLint("NewApi")
     fun convertStringToDate(string: String): Timestamp {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         return Timestamp(LocalDateTime.parse(string, formatter).atOffset(ZoneOffset.UTC).toInstant().epochSecond, 0)
     }
 
-    //    suspend fun getLatest(): Response<ListOfNewsModel> {
+    @SuppressLint("NewApi")
+    fun convertTimestampToStringFormat(timestamp: Timestamp): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
+        return formatter.format(timestamp.toDate())
+    }
+
     suspend fun getLatest(): ResponseProcessedWithLikes {
         val auxResponse: Response<ListOfNewsModel> = newsService.getLatest()
-
-        auxResponse.message()
-
         if (auxResponse.isSuccessful) {
             val weNewsList = auxResponse.body()!!.results
             val connectedUserEmail: String = fireAuth.currentUser?.email!!
@@ -61,11 +67,13 @@ class NewsRepository constructor(private val newsService: NewsService) {
 
             val likedNews = fireStoreData.documents.map { it.id }
             val finalList = weNewsList.map {
+                var didLike = false
+                val didSave = false
+
                 if (likedNews.contains(titleToIdProcess(it.title))) {
-                    ApiNewsModelView(apiNewsModelWeb = it, didUserLike = true, didUserSaved = false)
-                } else {
-                    ApiNewsModelView(apiNewsModelWeb = it, didUserLike = false, didUserSaved = false)
+                    didLike = true
                 }
+                ApiNewsModelView(apiNewsModelWeb = it, didUserLike = didLike, didUserSaved = didSave)
             }
 
             return ResponseProcessedWithLikes(
@@ -75,7 +83,6 @@ class NewsRepository constructor(private val newsService: NewsService) {
             )
         }
 
-//        return newsService.getLatest()
         return ResponseProcessedWithLikes(
             isSuccessful = auxResponse.isSuccessful,
             message = auxResponse.message(),
@@ -83,10 +90,61 @@ class NewsRepository constructor(private val newsService: NewsService) {
         )
     }
 
+
+    @SuppressLint("NewApi")
+    suspend fun getHotNews(): ResponseProcessedWithLikes {
+
+        val offsetTimeHot =
+            Timestamp(LocalDateTime.now().minusDays(1).atOffset(ZoneOffset.UTC).toInstant().epochSecond, 0)
+        val connectedUserEmail: String = fireAuth.currentUser?.email!!
+
+        val fireStoreData = fireStore.collection("news_to_consider")
+            .whereGreaterThan("pubDate", offsetTimeHot)
+            .get().await()
+
+        if (!fireStoreData.isEmpty) {
+            val weNewsList = fireStoreData.documents.map {
+                val auxObj = it.toObject(FireStoreNewsModel::class.java)
+
+                var didLike = false
+                var didSave = false
+
+                if (auxObj!!.likes.contains(connectedUserEmail)) {
+                    didLike = true
+                }
+
+                ApiNewsModelView(
+                    apiNewsModelWeb = ApiNewsModel(
+                        title = auxObj.title,
+                        link = auxObj.link,
+                        keyWords = auxObj.keyWords,
+                        creator = auxObj.creator,
+                        description = auxObj.description,
+                        content = auxObj.content,
+                        pubDate = convertTimestampToStringFormat(auxObj.pubDate!!),
+                        image_url = auxObj.image_url
+                    ), didUserLike = didLike, didUserSaved = didSave
+                )
+            }
+
+            return ResponseProcessedWithLikes(
+                isSuccessful = !fireStoreData.isEmpty,
+                message = "",
+                body = weNewsList
+            )
+        }
+
+        return ResponseProcessedWithLikes(
+            isSuccessful = !fireStoreData.isEmpty,
+            message = "",
+            body = emptyList()
+        )
+    }
+
+
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun likePost(article: ApiNewsModel, position: Int): NewsStatusLike {
         val documentProcessedId: String = titleToIdProcess(article.title)
-
         try {
             val data = fireStore
                 .collection("news_to_consider")
@@ -95,6 +153,7 @@ class NewsRepository constructor(private val newsService: NewsService) {
             if (data.exists()) {
                 val dataCasted = data.toObject(FireStoreNewsModel::class.java)
                 val connectedUserEmail: String = fireAuth.currentUser?.email!!
+
                 if (dataCasted?.likes!!.contains(connectedUserEmail)) {
                     fireStore.collection("news_to_consider").document(documentProcessedId)
                         .update("likes", FieldValue.arrayRemove(connectedUserEmail))
@@ -106,7 +165,7 @@ class NewsRepository constructor(private val newsService: NewsService) {
                 }
             } else {
                 val fireStoreArticle = FireStoreNewsModel(
-                    title = documentProcessedId,
+                    title = article.title,
                     link = article.link,
                     keyWords = article.keyWords,
                     creator = article.creator,

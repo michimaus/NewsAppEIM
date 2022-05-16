@@ -1,19 +1,16 @@
-package com.example.newsappeim.screens.main_app_ui.latest
+package com.example.newsappeim.screens.main_app_ui
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.newsappeim.data.model.ApiNewsModel
 import com.example.newsappeim.data.model.ApiNewsModelView
-import com.example.newsappeim.data.model.ListOfNewsModel
 import com.example.newsappeim.data.model.NewsStatusLike
 import com.example.newsappeim.repositories.NewsRepository
 import kotlinx.coroutines.*
 
-class LatestViewModel constructor(private val newsRepository: NewsRepository) : ViewModel() {
+class NewsListViewModel constructor(private val newsRepository: NewsRepository) : ViewModel() {
 
     val TAG: String = "LatestViewModel"
 
@@ -34,6 +31,23 @@ class LatestViewModel constructor(private val newsRepository: NewsRepository) : 
 
             loading.postValue(true)
             val response = newsRepository.getLatest()
+
+            withContext(Dispatchers.Main) {
+                if (response.isSuccessful) {
+                    latestList.postValue(response.body)
+                    loading.postValue(false)
+                } else {
+                    onError("Error : ${response.message} ")
+                }
+            }
+        }
+    }
+
+    fun getHotNews() {
+        job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
+
+            loading.postValue(true)
+            val response = newsRepository.getHotNews()
 
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {

@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.newsappeim.databinding.FragmentLatestBinding
 import com.example.newsappeim.repositories.NewsRepository
 import com.example.newsappeim.screens.adapters.NewsCardAdapter
+import com.example.newsappeim.screens.main_app_ui.NewsListViewModel
 import com.example.newsappeim.services.NewsService
 
 class LatestFragment : Fragment() {
@@ -19,10 +20,8 @@ class LatestFragment : Fragment() {
 
     private val TAG: String = "LatestFragment"
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
-    lateinit var latestViewModel: LatestViewModel
+    lateinit var newsListViewModel: NewsListViewModel
     private val newsService = NewsService.getInstance()
     private val newsAdapter = NewsCardAdapter()
 
@@ -31,25 +30,25 @@ class LatestFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        latestViewModel =
-            ViewModelProvider(this, LatestViewModelFactory(NewsRepository(newsService)))[LatestViewModel::class.java]
+        newsListViewModel =
+            ViewModelProvider(this, LatestViewModelFactory(NewsRepository(newsService)))[NewsListViewModel::class.java]
 
         _binding = FragmentLatestBinding.inflate(inflater, container, false)
         val root: View = binding.root
         binding.recyclerview.adapter = newsAdapter
 
-        latestViewModel.errorMessage.observe(viewLifecycleOwner) {
+        newsListViewModel.errorMessage.observe(viewLifecycleOwner) {
             Log.wtf(TAG, it)
             binding.progressBar.visibility = View.GONE
             Toast.makeText(this.activity, it, Toast.LENGTH_SHORT).show()
         }
 
-        latestViewModel.latestList.observe(viewLifecycleOwner) {
-            newsAdapter.setNewsModelList(it, latestViewModel)
+        newsListViewModel.latestList.observe(viewLifecycleOwner) {
+            newsAdapter.setNewsModelList(it, newsListViewModel)
             binding.progressBar.visibility = View.GONE
         }
 
-        latestViewModel.loading.observe(viewLifecycleOwner) {
+        newsListViewModel.loading.observe(viewLifecycleOwner) {
             Log.wtf(TAG, "Should be loading $it")
             if (it) {
                 print("Mergeeeeee")
@@ -58,11 +57,11 @@ class LatestFragment : Fragment() {
             }
         }
 
-        latestViewModel.articleToLike.observe(viewLifecycleOwner) {
+        newsListViewModel.articleToLike.observe(viewLifecycleOwner) {
             newsAdapter.handleObservedLike(it)
         }
 
-        latestViewModel.getLatest()
+        newsListViewModel.getLatest()
 
         return root
     }

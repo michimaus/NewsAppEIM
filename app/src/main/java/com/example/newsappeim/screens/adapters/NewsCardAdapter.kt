@@ -2,7 +2,6 @@ package com.example.newsappeim.screens.adapters
 
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.opengl.Visibility
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +15,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.newsappeim.data.model.ApiNewsModelView
 import com.example.newsappeim.data.model.NewsStatusLike
 import com.example.newsappeim.databinding.AdapterNewsBinding
-import com.example.newsappeim.screens.main_app_ui.latest.LatestViewModel
+import com.example.newsappeim.screens.main_app_ui.NewsListViewModel
 import com.google.android.material.chip.Chip
 import java.util.*
 
@@ -32,9 +31,9 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
     )
 
     private var news = mutableListOf<ApiNewsModelView>()
-    private lateinit var newsViewModel: LatestViewModel
+    private lateinit var newsViewModel: NewsListViewModel
 
-    fun setNewsModelList(apiNews: List<ApiNewsModelView>, newsViewModel: LatestViewModel) {
+    fun setNewsModelList(apiNews: List<ApiNewsModelView>, newsViewModel: NewsListViewModel) {
         this.news = apiNews.toMutableList()
         this.newsViewModel = newsViewModel
         notifyDataSetChanged()
