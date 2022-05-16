@@ -11,6 +11,22 @@ data class ApiNewsModel(
     val content: String?,
     val pubDate: String?,
     val image_url: String?
+) {
+    constructor() : this("", "", emptyList(), emptyList(), "", "", "", "")
+}
+
+data class ApiNewsModelView(
+    val apiNewsModelWeb: ApiNewsModel,
+    var didUserLike: Boolean,
+    var didUserSaved: Boolean,
+) {
+    constructor() : this( ApiNewsModel(), false, false)
+}
+
+data class ResponseProcessedWithLikes(
+    val message: String,
+    val isSuccessful: Boolean,
+    val body: List<ApiNewsModelView>
 )
 
 

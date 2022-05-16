@@ -45,21 +45,22 @@ class LatestFragment : Fragment() {
         }
 
         latestViewModel.latestList.observe(viewLifecycleOwner) {
-            newsAdapter.setNewsModelList(it.results, latestViewModel)
+            newsAdapter.setNewsModelList(it, latestViewModel)
             binding.progressBar.visibility = View.GONE
         }
 
         latestViewModel.loading.observe(viewLifecycleOwner) {
             Log.wtf(TAG, "Should be loading $it")
             if (it) {
-//                binding.progressDialog.visibility = View.VISIBLE
                 print("Mergeeeeee")
             } else {
-//                binding.progressDialog.visibility = View.GONE
                 print("Gata.....")
             }
         }
 
+        latestViewModel.articleToLike.observe(viewLifecycleOwner) {
+            newsAdapter.handleObservedLike(it)
+        }
 
         latestViewModel.getLatest()
 

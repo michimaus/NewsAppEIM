@@ -1,26 +1,23 @@
 package com.example.newsappeim.repositories
 
 import android.os.Build
-import android.os.Parcel
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.example.newsappeim.data.model.ApiNewsModel
-import com.example.newsappeim.data.model.FireStoreNewsCommentModel
-import com.example.newsappeim.data.model.FireStoreNewsModel
+import com.example.newsappeim.data.model.*
 import com.example.newsappeim.services.NewsService
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
+import retrofit2.Response
 import java.math.BigInteger
 import java.security.MessageDigest
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import kotlin.concurrent.thread
 
 class NewsRepository constructor(private val newsService: NewsService) {
 
@@ -29,7 +26,7 @@ class NewsRepository constructor(private val newsService: NewsService) {
     private val fireStore = Firebase.firestore
     private val fireAuth = Firebase.auth
 
-    private fun md5(input:String): String {
+    private fun md5(input: String): String {
         val md = MessageDigest.getInstance("MD5")
         return BigInteger(1, md.digest(input.toByteArray())).toString(16).padStart(32, '0')
     }
@@ -45,11 +42,49 @@ class NewsRepository constructor(private val newsService: NewsService) {
         return Timestamp(LocalDateTime.parse(string, formatter).atOffset(ZoneOffset.UTC).toInstant().epochSecond, 0)
     }
 
-    suspend fun getLatest() = newsService.getLatest()
+    //    suspend fun getLatest(): Response<ListOfNewsModel> {
+    suspend fun getLatest(): ResponseProcessedWithLikes {
+        val auxResponse: Response<ListOfNewsModel> = newsService.getLatest()
+
+        auxResponse.message()
+
+        if (auxResponse.isSuccessful) {
+            val weNewsList = auxResponse.body()!!.results
+            val connectedUserEmail: String = fireAuth.currentUser?.email!!
+
+            val listOfHashedNames: List<String> = weNewsList.map { titleToIdProcess(it.title) }
+
+            val fireStoreData = fireStore.collection("news_to_consider")
+                .whereIn(FieldPath.documentId(), listOfHashedNames)
+                .whereArrayContains("likes", connectedUserEmail)
+                .get().await()
+
+            val likedNews = fireStoreData.documents.map { it.id }
+            val finalList = weNewsList.map {
+                if (likedNews.contains(titleToIdProcess(it.title))) {
+                    ApiNewsModelView(apiNewsModelWeb = it, didUserLike = true, didUserSaved = false)
+                } else {
+                    ApiNewsModelView(apiNewsModelWeb = it, didUserLike = false, didUserSaved = false)
+                }
+            }
+
+            return ResponseProcessedWithLikes(
+                isSuccessful = auxResponse.isSuccessful,
+                message = auxResponse.message(),
+                body = finalList
+            )
+        }
+
+//        return newsService.getLatest()
+        return ResponseProcessedWithLikes(
+            isSuccessful = auxResponse.isSuccessful,
+            message = auxResponse.message(),
+            body = emptyList()
+        )
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun likePost(article: ApiNewsModel): Boolean {
-
+    suspend fun likePost(article: ApiNewsModel, position: Int): NewsStatusLike {
         val documentProcessedId: String = titleToIdProcess(article.title)
 
         try {
@@ -63,14 +98,14 @@ class NewsRepository constructor(private val newsService: NewsService) {
                 if (dataCasted?.likes!!.contains(connectedUserEmail)) {
                     fireStore.collection("news_to_consider").document(documentProcessedId)
                         .update("likes", FieldValue.arrayRemove(connectedUserEmail))
-
+                    return NewsStatusLike(hasStatusChange = true, hasUserLike = false, indexInList = position)
                 } else {
                     fireStore.collection("news_to_consider").document(documentProcessedId)
                         .update("likes", FieldValue.arrayUnion(connectedUserEmail))
-
+                    return NewsStatusLike(hasStatusChange = true, hasUserLike = true, indexInList = position)
                 }
             } else {
-                val fireStoreArticle: FireStoreNewsModel = FireStoreNewsModel(
+                val fireStoreArticle = FireStoreNewsModel(
                     title = documentProcessedId,
                     link = article.link,
                     keyWords = article.keyWords,
@@ -84,13 +119,12 @@ class NewsRepository constructor(private val newsService: NewsService) {
                 )
 
                 fireStore.collection("news_to_consider").document(documentProcessedId).set(fireStoreArticle)
+                return NewsStatusLike(hasStatusChange = true, hasUserLike = true, indexInList = position)
             }
-
-
-            return true
         } catch (e: Exception) {
             Log.e(TAG, e.stackTraceToString())
-            return false
+
+            return NewsStatusLike(hasStatusChange = false, hasUserLike = false, indexInList = position)
         }
     }
 }

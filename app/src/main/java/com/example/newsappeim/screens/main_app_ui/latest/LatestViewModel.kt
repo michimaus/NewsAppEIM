@@ -7,7 +7,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.newsappeim.data.model.ApiNewsModel
+import com.example.newsappeim.data.model.ApiNewsModelView
 import com.example.newsappeim.data.model.ListOfNewsModel
+import com.example.newsappeim.data.model.NewsStatusLike
 import com.example.newsappeim.repositories.NewsRepository
 import kotlinx.coroutines.*
 
@@ -15,16 +17,10 @@ class LatestViewModel constructor(private val newsRepository: NewsRepository) : 
 
     val TAG: String = "LatestViewModel"
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is latest Fragment"
-    }
-    val text: LiveData<String> = _text
-
     val errorMessage = MutableLiveData<String>()
-    val loading = MutableLiveData<Boolean>().apply {
-        value = true
-    }
-    val latestList = MutableLiveData<ListOfNewsModel>()
+    val loading = MutableLiveData<Boolean>().apply { value = true }
+    val latestList = MutableLiveData<List<ApiNewsModelView>>()
+    val articleToLike = MutableLiveData<NewsStatusLike>()
 
     var job: Job? = null
     var likeJob: Job? = null
@@ -41,22 +37,22 @@ class LatestViewModel constructor(private val newsRepository: NewsRepository) : 
 
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
-                    latestList.postValue(response.body())
+                    latestList.postValue(response.body)
                     loading.postValue(false)
                 } else {
-                    onError("Error : ${response.message()} ")
+                    onError("Error : ${response.message} ")
                 }
             }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun likePost(article: ApiNewsModel) {
+    fun likePost(article: ApiNewsModel, position: Int) {
         likeJob = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
-            val response = newsRepository.likePost(article)
+            val response: NewsStatusLike = newsRepository.likePost(article, position)
 
             withContext(Dispatchers.Main) {
-
+                articleToLike.postValue(response)
             }
         }
     }

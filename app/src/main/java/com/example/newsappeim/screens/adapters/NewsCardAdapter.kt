@@ -2,8 +2,10 @@ package com.example.newsappeim.screens.adapters
 
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.opengl.Visibility
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
@@ -11,7 +13,8 @@ import androidx.core.view.isEmpty
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.example.newsappeim.data.model.ApiNewsModel
+import com.example.newsappeim.data.model.ApiNewsModelView
+import com.example.newsappeim.data.model.NewsStatusLike
 import com.example.newsappeim.databinding.AdapterNewsBinding
 import com.example.newsappeim.screens.main_app_ui.latest.LatestViewModel
 import com.google.android.material.chip.Chip
@@ -28,13 +31,23 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
         Color.rgb(190, 174, 226)
     )
 
-    private var news = mutableListOf<ApiNewsModel>()
+    private var news = mutableListOf<ApiNewsModelView>()
     private lateinit var newsViewModel: LatestViewModel
 
-    fun setNewsModelList(apiNews: List<ApiNewsModel>, newsViewModel: LatestViewModel) {
+    fun setNewsModelList(apiNews: List<ApiNewsModelView>, newsViewModel: LatestViewModel) {
         this.news = apiNews.toMutableList()
         this.newsViewModel = newsViewModel
         notifyDataSetChanged()
+    }
+
+    fun handleObservedLike(articleToLike: NewsStatusLike) {
+        if (!articleToLike.hasStatusChange) {
+            return
+        }
+        news[articleToLike.indexInList].didUserLike = articleToLike.hasUserLike
+        news[articleToLike.indexInList].didUserSaved = false
+
+        notifyItemChanged(articleToLike.indexInList)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
@@ -45,7 +58,9 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-        val article = news[position]
+        val article = news[position].apiNewsModelWeb
+        val didLike = news[position].didUserLike
+        val didSave = news[position].didUserSaved
 
         holder.binding.title.text = article.title
         holder.binding.articleShortDescription.text = article.description
@@ -62,17 +77,12 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
             chip1.text = "#tag1"
             chip2.text = "#tag2"
 
-//            chip1.textSize = 12f
-//            chip2.textSize = 12f
-
             chip1.shapeAppearanceModel.withCornerSize(16f)
             chip2.shapeAppearanceModel.withCornerSize(16f)
 
 
             holder.binding.chipGroup.addView(chip1)
             holder.binding.chipGroup.addView(chip2)
-
-//            Log.d(TAG, article.keyWords?.isNotEmpty().toString())
 
             article.keyWords?.forEach {
                 val chipAux = Chip(holder.binding.chipGroup.context)
@@ -85,8 +95,20 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
             }
         }
 
+        if (didLike) {
+            holder.binding.likeButton.visibility = View.GONE
+            holder.binding.likeButtonFilled.visibility = View.VISIBLE
+        } else {
+            holder.binding.likeButton.visibility = View.VISIBLE
+            holder.binding.likeButtonFilled.visibility = View.GONE
+        }
+
         holder.binding.likeButton.setOnClickListener {
-            this.newsViewModel.likePost(article)
+            this.newsViewModel.likePost(article, position)
+        }
+
+        holder.binding.likeButtonFilled.setOnClickListener {
+            this.newsViewModel.likePost(article, position)
         }
 
         if (article.creator?.isNotEmpty() == true) {
