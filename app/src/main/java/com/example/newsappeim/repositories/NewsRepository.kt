@@ -48,7 +48,7 @@ class NewsRepository constructor(private val newsService: NewsService) {
 
     @SuppressLint("NewApi")
     fun convertTimestampToStringFormat(timestamp: Timestamp): String {
-        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT)
         return formatter.format(timestamp.toDate())
     }
 
@@ -95,7 +95,10 @@ class NewsRepository constructor(private val newsService: NewsService) {
     suspend fun getHotNews(): ResponseProcessedWithLikes {
 
         val offsetTimeHot =
-            Timestamp(LocalDateTime.now().minusDays(1).atOffset(ZoneOffset.UTC).toInstant().epochSecond, 0)
+            Timestamp(
+                LocalDateTime.now().minusDays(1).minusHours(12).atOffset(ZoneOffset.UTC).toInstant().epochSecond,
+                0
+            )
         val connectedUserEmail: String = fireAuth.currentUser?.email!!
 
         val fireStoreData = fireStore.collection("news_to_consider")

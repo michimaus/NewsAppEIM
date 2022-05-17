@@ -1,5 +1,6 @@
 package com.example.newsappeim.screens.adapters
 
+import android.app.Activity
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
@@ -12,10 +13,13 @@ import androidx.core.view.isEmpty
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.newsappeim.MainAppActivity
 import com.example.newsappeim.data.model.ApiNewsModelView
 import com.example.newsappeim.data.model.NewsStatusLike
 import com.example.newsappeim.databinding.AdapterNewsBinding
 import com.example.newsappeim.screens.main_app_ui.NewsListViewModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import java.util.*
 
@@ -108,6 +112,16 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
 
         holder.binding.likeButtonFilled.setOnClickListener {
             this.newsViewModel.likePost(article, position)
+        }
+
+        holder.binding.moreDetailsButton.setOnClickListener {
+            val modalBottomSheet = NewsDetailBottomSheet()
+            modalBottomSheet.setNewsData(article)
+            modalBottomSheet.showNow((holder.itemView.context as MainAppActivity).supportFragmentManager, NewsDetailBottomSheet.TAG)
+
+            val modalBottomSheetBehavior = (modalBottomSheet.dialog as BottomSheetDialog).behavior
+//            modalBottomSheetBehavior.peekHeight = 900
+//            modalBottomSheetBehavior.isDraggable = false
         }
 
         if (article.creator?.isNotEmpty() == true) {

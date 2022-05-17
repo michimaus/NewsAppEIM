@@ -8,6 +8,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.newsappeim.databinding.ActivityMainAppBinding
+import com.example.newsappeim.screens.adapters.NewsDetailBottomSheet
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class MainAppActivity : AppCompatActivity() {
 

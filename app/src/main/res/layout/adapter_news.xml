@@ -96,6 +96,21 @@
             android:gravity="end"
             android:orientation="horizontal">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8sp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/more_details_button"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="More details..." />
+            </LinearLayout>
+
             <Button
                 android:id="@+id/like_button"
                 style="@style/Widget.Material3.Button.IconButton"
@@ -132,6 +147,7 @@
                 android:layout_marginEnd="8sp"
                 app:icon="@drawable/ic_round_bookmark_border_24"
                 app:iconTint="@color/black" />
+
         </LinearLayout>
     </LinearLayout>
 
