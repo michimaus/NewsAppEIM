@@ -1,5 +1,8 @@
 package com.example.newsappeim.data.model
 
+import android.graphics.Bitmap
+import androidx.core.graphics.drawable.toBitmap
+import com.example.newsappeim.MainAppActivity
 import com.google.firebase.Timestamp
 
 data class ApiNewsModel(
@@ -50,6 +53,20 @@ data class FireStoreNewsModel(
 ) {
     constructor() : this("", "", emptyList(), emptyList(), "", "", Timestamp.now(), "", emptyList(), emptyList())
 }
+
+data class SharedPreferencesNewsModel(
+    val title: String?,
+    val link: String?,
+    val keyWords: List<String>?,
+    val creator: List<String>?,
+    val description: String?,
+    val content: String?,
+    val pubDate: Timestamp?,
+    val image_url: String?,
+) {
+    constructor() : this("", "", emptyList(), emptyList(), "", "", Timestamp.now(), MainAppActivity.brokenImageDrawable.toBitmap().toString())
+}
+
 
 data class FireStoreNewsCommentModel(
     val comment: String,

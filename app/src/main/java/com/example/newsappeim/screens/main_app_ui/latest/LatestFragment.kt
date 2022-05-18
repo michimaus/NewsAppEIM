@@ -43,7 +43,7 @@ class LatestFragment : Fragment() {
             Toast.makeText(this.activity, it, Toast.LENGTH_SHORT).show()
         }
 
-        newsListViewModel.latestList.observe(viewLifecycleOwner) {
+        newsListViewModel.obtainedNewsList.observe(viewLifecycleOwner) {
             newsAdapter.setNewsModelList(it, newsListViewModel)
             binding.progressBar.visibility = View.GONE
         }
@@ -59,6 +59,10 @@ class LatestFragment : Fragment() {
 
         newsListViewModel.articleToLike.observe(viewLifecycleOwner) {
             newsAdapter.handleObservedLike(it)
+        }
+
+        newsListViewModel.articleToSave.observe(viewLifecycleOwner) {
+            newsAdapter.handleObservedSave(it)
         }
 
         newsListViewModel.getLatest()

@@ -1,9 +1,12 @@
 package com.example.newsappeim.repositories
 
 import android.annotation.SuppressLint
-import android.os.Build
+import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
-import androidx.annotation.RequiresApi
+import androidx.core.graphics.drawable.toBitmap
+import com.example.newsappeim.MainAppActivity
 import com.example.newsappeim.data.model.*
 import com.example.newsappeim.services.NewsService
 import com.google.firebase.Timestamp
@@ -12,9 +15,11 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
 import kotlinx.coroutines.tasks.await
 import retrofit2.Response
 import java.math.BigInteger
+import java.net.URL
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -23,6 +28,10 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class NewsRepository constructor(private val newsService: NewsService) {
+
+    companion object {
+        val gsonSerializer: Gson = Gson()
+    }
 
     val TAG: String = "NewsRepository"
 
@@ -68,10 +77,13 @@ class NewsRepository constructor(private val newsService: NewsService) {
             val likedNews = fireStoreData.documents.map { it.id }
             val finalList = weNewsList.map {
                 var didLike = false
-                val didSave = false
+                var didSave = false
 
                 if (likedNews.contains(titleToIdProcess(it.title))) {
                     didLike = true
+                }
+                if (MainAppActivity.preferences.contains(titleToIdProcess(it.title))) {
+                    didSave = true
                 }
                 ApiNewsModelView(apiNewsModelWeb = it, didUserLike = didLike, didUserSaved = didSave)
             }
@@ -106,14 +118,18 @@ class NewsRepository constructor(private val newsService: NewsService) {
             .get().await()
 
         if (!fireStoreData.isEmpty) {
-            val weNewsList = fireStoreData.documents.map {
-                val auxObj = it.toObject(FireStoreNewsModel::class.java)
+            val auxDocuments = fireStoreData.documents.map { it.toObject(FireStoreNewsModel::class.java) }
+            val newNewsList = auxDocuments.sortedBy { it!!.likes.size }.reversed().map {
+                val auxObj = it
 
                 var didLike = false
                 var didSave = false
 
                 if (auxObj!!.likes.contains(connectedUserEmail)) {
                     didLike = true
+                }
+                if (MainAppActivity.preferences.contains(titleToIdProcess(auxObj.title))) {
+                    didSave = true
                 }
 
                 ApiNewsModelView(
@@ -133,7 +149,7 @@ class NewsRepository constructor(private val newsService: NewsService) {
             return ResponseProcessedWithLikes(
                 isSuccessful = !fireStoreData.isEmpty,
                 message = "",
-                body = weNewsList
+                body = newNewsList
             )
         }
 
@@ -145,7 +161,6 @@ class NewsRepository constructor(private val newsService: NewsService) {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun likePost(article: ApiNewsModel, position: Int): NewsStatusLike {
         val documentProcessedId: String = titleToIdProcess(article.title)
         try {
@@ -187,6 +202,42 @@ class NewsRepository constructor(private val newsService: NewsService) {
             Log.e(TAG, e.stackTraceToString())
 
             return NewsStatusLike(hasStatusChange = false, hasUserLike = false, indexInList = position)
+        }
+    }
+
+    suspend fun savePost(article: ApiNewsModel, position: Int, preferences: SharedPreferences): NewsStatusSave {
+        val documentProcessedId: String = titleToIdProcess(article.title)
+
+        val preferencesEditor: SharedPreferences.Editor = preferences.edit()
+
+        if (preferences.contains(documentProcessedId)) {
+            preferencesEditor.remove(documentProcessedId).apply()
+
+            return NewsStatusSave(hasStatusChange = true, hasUserSave = false, indexInList = position)
+        } else {
+            var image: Bitmap
+            try {
+                image = BitmapFactory.decodeStream(URL(article.image_url).openConnection().getInputStream())
+            } catch(e: Exception) {
+                image = MainAppActivity.brokenImageDrawable.toBitmap()
+                Log.e(TAG, e.stackTraceToString());
+            }
+
+            val articleToBeSaved = SharedPreferencesNewsModel(
+                    title = article.title,
+                    link = article.link,
+                    keyWords = article.keyWords,
+                    creator = article.creator,
+                    description = article.description,
+                    content = article.content,
+                    pubDate = convertStringToDate(article.pubDate!!),
+                    image_url = image.toString(),
+                )
+
+            preferencesEditor.putString(documentProcessedId, gsonSerializer.toJson(articleToBeSaved))
+            preferencesEditor.apply()
+
+            return NewsStatusSave(hasStatusChange = true, hasUserSave = true, indexInList = position)
         }
     }
 }

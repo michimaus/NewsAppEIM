@@ -43,7 +43,7 @@ class HotNewsFragment : Fragment() {
             Toast.makeText(this.activity, it, Toast.LENGTH_SHORT).show()
         }
 
-        hotNewsViewModel.latestList.observe(viewLifecycleOwner) {
+        hotNewsViewModel.obtainedNewsList.observe(viewLifecycleOwner) {
             newsAdapter.setNewsModelList(it, hotNewsViewModel)
             binding.progressBar.visibility = View.GONE
         }
@@ -59,6 +59,10 @@ class HotNewsFragment : Fragment() {
 
         hotNewsViewModel.articleToLike.observe(viewLifecycleOwner) {
             newsAdapter.handleObservedLike(it)
+        }
+
+        hotNewsViewModel.articleToSave.observe(viewLifecycleOwner) {
+            newsAdapter.handleObservedSave(it)
         }
 
         hotNewsViewModel.getHotNews()

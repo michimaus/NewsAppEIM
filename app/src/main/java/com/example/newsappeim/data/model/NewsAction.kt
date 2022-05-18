@@ -6,5 +6,13 @@ data class NewsStatusLike(
     val indexInList: Int
 )
 
+data class NewsStatusSave(
+    val hasStatusChange: Boolean,
+    val hasUserSave: Boolean,
+    val indexInList: Int
+)
+
+
+
 
 

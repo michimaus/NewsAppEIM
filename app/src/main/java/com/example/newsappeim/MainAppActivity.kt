@@ -1,8 +1,11 @@
 package com.example.newsappeim
 
+import android.content.SharedPreferences
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -14,6 +17,11 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 class MainAppActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainAppBinding
+
+    companion object {
+        lateinit var brokenImageDrawable: Drawable
+        lateinit var preferences: SharedPreferences
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,5 +45,8 @@ class MainAppActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        brokenImageDrawable = ContextCompat.getDrawable(this,R.drawable.ic_outline_broken_image_24)!!
+        preferences = this.getPreferences(MODE_PRIVATE)
     }
 }
