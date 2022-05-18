@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         google()
+        maven { url 'https://jitpack.io' }
     }
     dependencies {
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.4.2")
@@ -70,6 +71,9 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.5.2"
+
+    // Charts
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.12.0'

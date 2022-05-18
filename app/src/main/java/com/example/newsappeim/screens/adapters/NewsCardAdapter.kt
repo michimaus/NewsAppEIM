@@ -1,6 +1,5 @@
 package com.example.newsappeim.screens.adapters
 
-import android.app.Activity
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
@@ -18,21 +17,22 @@ import com.example.newsappeim.data.model.ApiNewsModelView
 import com.example.newsappeim.data.model.NewsStatusLike
 import com.example.newsappeim.databinding.AdapterNewsBinding
 import com.example.newsappeim.screens.main_app_ui.NewsListViewModel
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import java.util.*
 
 class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
 
-    val TAG: String = "NewsCardAdapter"
+    companion object {
+        const val TAG = "NewsCardAdapter"
 
-    private val colorsOfChips = listOf(
-        Color.rgb(205, 240, 234),
-        Color.rgb(249, 200, 249),
-        Color.rgb(247, 219, 240),
-        Color.rgb(190, 174, 226)
-    )
+        val colorsOfChips = listOf(
+            Color.rgb(205, 240, 234),
+            Color.rgb(249, 200, 249),
+            Color.rgb(247, 219, 240),
+            Color.rgb(190, 174, 226)
+        )
+    }
 
     private var news = mutableListOf<ApiNewsModelView>()
     private lateinit var newsViewModel: NewsListViewModel
@@ -58,6 +58,7 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
         val binding = AdapterNewsBinding.inflate(inflater, parent, false)
         return MainViewHolder(binding)
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
@@ -116,12 +117,11 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
 
         holder.binding.moreDetailsButton.setOnClickListener {
             val modalBottomSheet = NewsDetailBottomSheet()
-            modalBottomSheet.setNewsData(article)
             modalBottomSheet.showNow((holder.itemView.context as MainAppActivity).supportFragmentManager, NewsDetailBottomSheet.TAG)
 
             val modalBottomSheetBehavior = (modalBottomSheet.dialog as BottomSheetDialog).behavior
-//            modalBottomSheetBehavior.peekHeight = 900
-//            modalBottomSheetBehavior.isDraggable = false
+            modalBottomSheet.setNewsData(article)
+            modalBottomSheetBehavior.maxHeight = 2100
         }
 
         if (article.creator?.isNotEmpty() == true) {
@@ -138,7 +138,7 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
         if (article.image_url != null) {
             holder.binding.imageview.scaleType = ImageView.ScaleType.CENTER_CROP
             Glide
-                .with(holder.itemView.context)
+                .with(holder.binding.imageview.context)
                 .load(article.image_url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.binding.imageview)

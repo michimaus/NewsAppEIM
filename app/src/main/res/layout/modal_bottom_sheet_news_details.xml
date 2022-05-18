@@ -14,7 +14,103 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="vertical"/>
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imageview"
+                    android:layout_width="match_parent"
+                    android:layout_height="200sp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_outline_broken_image_24" />
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8sp"
+                    android:paddingTop="8sp"
+                    android:paddingEnd="8sp"
+                    android:text="We going to the league We going to the league We going to the league "
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/articleDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8sp"
+                    android:paddingTop="8sp"
+                    android:text="Today"
+                    android:textSize="12sp" />
+
+
+                <TextView
+                    android:id="@+id/authorsTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8sp"
+                    android:paddingTop="8sp"
+                    android:text="Written by:"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/articleContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8sp"
+                    android:paddingTop="8sp"
+                    android:paddingEnd="8sp"
+                    android:text="Mega mega mega summed up description Mega mega mega summed up description Mega mega mega summed up description Mega mega mega summed up description Mega mega mega summed up description Mega mega mega summed up description Mega mega mega summed up description " />
+
+                <TextView
+                    android:id="@+id/articleExternalLink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoLink="web"
+                    android:linksClickable="false"
+                    android:paddingStart="8sp"
+                    android:paddingTop="8sp"
+                    android:paddingEnd="8sp"
+                    android:text="link link link link link link link link link " />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:paddingStart="8sp"
+                    app:chipSpacingVertical="1sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/barChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="200sp"
+                    android:layout_margin="16dp" />
+
+
+                <com.github.mikephil.charting.charts.RadarChart
+                    android:id="@+id/statusChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="400sp"
+                    android:layout_margin="16dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
