@@ -62,7 +62,8 @@ class NewsRepository constructor(private val newsService: NewsService) {
     }
 
     suspend fun getLatest(): ResponseProcessedWithLikes {
-        val auxResponse: Response<ListOfNewsModel> = newsService.getLatest()
+//        val auxResponse: Response<ListOfNewsModel> = newsService.getLatest(NewsService.myMap["country"])
+        val auxResponse: Response<ListOfNewsModel> = newsService.getLatest(NewsService.countryCode)
         if (auxResponse.isSuccessful) {
             val weNewsList = auxResponse.body()!!.results
             val connectedUserEmail: String = fireAuth.currentUser?.email!!
