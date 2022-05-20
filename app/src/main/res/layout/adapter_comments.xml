@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:elevation="16sp"
+    app:cardCornerRadius="16sp"
+    app:cardElevation="16sp"
+    app:contentPaddingBottom="8dp"
+    app:contentPaddingTop="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/commentDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="8sp"
+            android:paddingBottom="8sp"
+            android:text="Today"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/commentAuthor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="8sp"
+            android:text="Written by:"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/commentContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="8sp"
+            android:paddingTop="8sp"
+            android:paddingEnd="8sp"
+            android:text="A very nice comment about this good article" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
+

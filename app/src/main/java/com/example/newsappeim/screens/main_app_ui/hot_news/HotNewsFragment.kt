@@ -32,6 +32,7 @@ class HotNewsFragment : Fragment() {
     ): View {
         hotNewsViewModel =
             ViewModelProvider(this, HotNewsViewModelFactory(NewsRepository(newsService)))[NewsListViewModel::class.java]
+        newsAdapter.setActualContext(requireContext())
 
         _binding = FragmentHotNewsBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -63,6 +64,10 @@ class HotNewsFragment : Fragment() {
 
         hotNewsViewModel.articleToSave.observe(viewLifecycleOwner) {
             newsAdapter.handleObservedSave(it)
+        }
+
+        hotNewsViewModel.commentsToGet.observe(viewLifecycleOwner) {
+            newsAdapter.handleObservedComments(it)
         }
 
         hotNewsViewModel.getHotNews()

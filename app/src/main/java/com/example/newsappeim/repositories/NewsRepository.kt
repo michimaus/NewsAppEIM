@@ -45,7 +45,7 @@ class NewsRepository constructor(private val newsService: NewsService) {
 
     private fun titleToIdProcess(string: String?): String {
         val aux = string!!.replace(".", "").replace("/", "").replace(" ", "")
-        return md5(aux);
+        return md5(aux)
     }
 
 
@@ -240,4 +240,61 @@ class NewsRepository constructor(private val newsService: NewsService) {
             return NewsStatusSave(hasStatusChange = true, hasUserSave = true, indexInList = position)
         }
     }
+
+    suspend fun getCommentsOfArticle(title: String): List<FireStoreNewsCommentModel> {
+        val documentProcessedId: String = titleToIdProcess(title)
+
+        return try {
+            val data = fireStore
+                .collection("news_to_consider")
+                .document(documentProcessedId).get().await()
+
+            if (data.exists()) {
+                val dataCasted = data.toObject(FireStoreNewsModel::class.java)
+                dataCasted!!.comments
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, e.stackTraceToString())
+            emptyList()
+        }
+    }
+
+
+    suspend fun addCommentToPost(article: ApiNewsModel, title: String, newComment: FireStoreNewsCommentModel): Unit {
+        val documentProcessedId: String = titleToIdProcess(title)
+        try {
+            val data = fireStore
+                .collection("news_to_consider")
+                .document(documentProcessedId).get().await()
+
+            if (data.exists()) {
+                val dataCasted = data.toObject(FireStoreNewsModel::class.java)
+                val connectedUserEmail: String = fireAuth.currentUser?.email!!
+
+                fireStore.collection("news_to_consider").document(documentProcessedId)
+                    .update("comments", FieldValue.arrayUnion(newComment))
+
+            } else {
+                val fireStoreArticle = FireStoreNewsModel(
+                    title = article.title,
+                    link = article.link,
+                    keyWords = article.keyWords,
+                    creator = article.creator,
+                    description = article.description,
+                    content = article.content,
+                    pubDate = convertStringToDate(article.pubDate!!),
+                    image_url = article.image_url,
+                    likes = emptyList(),
+                    comments = listOf(newComment)
+                )
+
+                fireStore.collection("news_to_consider").document(documentProcessedId).set(fireStoreArticle)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, e.stackTraceToString())
+        }
+    }
+
 }

@@ -32,6 +32,7 @@ class LatestFragment : Fragment() {
     ): View {
         newsListViewModel =
             ViewModelProvider(this, LatestViewModelFactory(NewsRepository(newsService)))[NewsListViewModel::class.java]
+        newsAdapter.setActualContext(requireContext())
 
         _binding = FragmentLatestBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -63,6 +64,10 @@ class LatestFragment : Fragment() {
 
         newsListViewModel.articleToSave.observe(viewLifecycleOwner) {
             newsAdapter.handleObservedSave(it)
+        }
+
+        newsListViewModel.commentsToGet.observe(viewLifecycleOwner) {
+            newsAdapter.handleObservedComments(it)
         }
 
         newsListViewModel.getLatest()

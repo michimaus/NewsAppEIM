@@ -54,6 +54,13 @@ data class FireStoreNewsModel(
     constructor() : this("", "", emptyList(), emptyList(), "", "", Timestamp.now(), "", emptyList(), emptyList())
 }
 
+data class GetCommentsHelperModel(
+    val apiNewsModelWeb: ApiNewsModel,
+    val comments: List<FireStoreNewsCommentModel>
+) {
+    constructor() : this( ApiNewsModel(), emptyList())
+}
+
 data class SharedPreferencesNewsModel(
     val title: String?,
     val link: String?,

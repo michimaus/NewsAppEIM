@@ -18,8 +18,9 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_main_app.xml" value="0.26969416126042633" />
         <entry key="app/src/main/res/layout/activity_main_backup.xml" value="0.3065412569474134" />
+        <entry key="app/src/main/res/layout/adapter_comments.xml" value="0.5" />
         <entry key="app/src/main/res/layout/adapter_movie.xml" value="0.23541666666666666" />
-        <entry key="app/src/main/res/layout/adapter_news.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/adapter_news.xml" value="0.5" />
         <entry key="app/src/main/res/layout/content_main.xml" value="0.23541666666666666" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_first.xml" value="0.23541666666666666" />
@@ -30,11 +31,12 @@
         <entry key="app/src/main/res/layout/fragment_login_test.xml" value="0.3065412569474134" />
         <entry key="app/src/main/res/layout/fragment_new_post.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_notifications.xml" value="0.26969416126042633" />
-        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_search.xml" value="0.2949978623343309" />
         <entry key="app/src/main/res/layout/fragment_second.xml" value="0.23541666666666666" />
         <entry key="app/src/main/res/layout/login_screen.xml" value="0.335" />
         <entry key="app/src/main/res/layout/login_screen_fragment.xml" value="0.29782411604714415" />
+        <entry key="app/src/main/res/layout/modal_bottom_sheet_news_comments.xml" value="0.33" />
         <entry key="app/src/main/res/layout/modal_bottom_sheet_news_details.xml" value="0.33" />
         <entry key="app/src/main/res/layout/register_screen_fragment.xml" value="0.45" />
         <entry key="app/src/main/res/layout/some_ceva.xml" value="0.3065412569474134" />
@@ -54,7 +56,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.29782411604714415" />
+        <option name="scale" value="0.33" />
       </ProjectState>
     </option>
   </component>

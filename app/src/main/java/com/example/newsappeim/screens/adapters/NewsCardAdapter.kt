@@ -1,5 +1,6 @@
 package com.example.newsappeim.screens.adapters
 
+import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -12,20 +13,25 @@ import androidx.annotation.RequiresApi
 import androidx.core.view.isEmpty
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.newsappeim.MainAppActivity
 import com.example.newsappeim.R
 import com.example.newsappeim.data.model.ApiNewsModelView
+import com.example.newsappeim.data.model.GetCommentsHelperModel
 import com.example.newsappeim.data.model.NewsStatusLike
 import com.example.newsappeim.data.model.NewsStatusSave
 import com.example.newsappeim.databinding.AdapterNewsBinding
 import com.example.newsappeim.screens.main_app_ui.NewsListViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
-import com.squareup.picasso.Picasso
 import java.util.*
 
 class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
+
+    private var actualContext: Context? = null
+
+    fun setActualContext(activityContext: Context) {
+        actualContext = activityContext
+    }
 
     companion object {
         const val TAG = "NewsCardAdapter"
@@ -48,6 +54,7 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
         notifyDataSetChanged()
     }
 
+
     fun handleObservedLike(articleToLike: NewsStatusLike) {
         if (!articleToLike.hasStatusChange) {
             return
@@ -56,6 +63,7 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
         notifyItemChanged(articleToLike.indexInList)
     }
 
+
     fun handleObservedSave(articleToSave: NewsStatusSave) {
         if (!articleToSave.hasStatusChange) {
             return
@@ -63,6 +71,20 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
         news[articleToSave.indexInList].didUserSaved = articleToSave.hasUserSave
         notifyItemChanged(articleToSave.indexInList)
     }
+
+
+    fun handleObservedComments(articleToSave: GetCommentsHelperModel) {
+        val modalBottomSheet = NewsCommentsBottomSheet()
+        modalBottomSheet.showNow(
+            (this.actualContext as MainAppActivity).supportFragmentManager,
+            NewsCommentsBottomSheet.TAG
+        )
+
+        val modalBottomSheetBehavior = (modalBottomSheet.dialog as BottomSheetDialog).behavior
+        modalBottomSheet.setCommentsData(articleToSave.apiNewsModelWeb, articleToSave.comments, newsViewModel)
+        modalBottomSheetBehavior.maxHeight = 2100
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -79,23 +101,6 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
 
         if (didLikeOrSaveUpdated.contains(position)) {
             this.didLikeOrSaveUpdated.remove(position)
-//            if (didLike) {
-//                holder.binding.likeButton.visibility = View.GONE
-//                holder.binding.likeButtonFilled.visibility = View.VISIBLE
-//            } else {
-//                holder.binding.likeButton.visibility = View.VISIBLE
-//                holder.binding.likeButtonFilled.visibility = View.GONE
-//            }
-//
-//            if (didSave) {
-//                holder.binding.saveButton.visibility = View.GONE
-//                holder.binding.saveButtonFilled.visibility = View.VISIBLE
-//            } else {
-//                holder.binding.saveButton.visibility = View.VISIBLE
-//                holder.binding.saveButtonFilled.visibility = View.GONE
-//            }
-//
-//            return
         }
 
         val preferences = (holder.itemView.context as MainAppActivity).getPreferences(MODE_PRIVATE)
@@ -166,6 +171,10 @@ class NewsCardAdapter : RecyclerView.Adapter<MainViewHolder>() {
         holder.binding.saveButtonFilled.setOnClickListener {
             this.newsViewModel.savePost(article, position, preferences)
             this.didLikeOrSaveUpdated.add(position)
+        }
+
+        holder.binding.commentsButton.setOnClickListener {
+            this.newsViewModel.getArticleComments(article.title!!, article, newsViewModel)
         }
 
         holder.binding.moreDetailsButton.setOnClickListener {

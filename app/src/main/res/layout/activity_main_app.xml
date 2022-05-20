@@ -16,6 +16,16 @@
 
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/bottom_sheet_comments"
+        style="@style/ThemeOverlay.Material3.BottomSheetDialog"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="8sp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    </FrameLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
