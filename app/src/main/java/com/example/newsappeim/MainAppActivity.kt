@@ -1,12 +1,16 @@
 package com.example.newsappeim
 
 import android.Manifest
+import android.app.ActivityManager
+import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -20,13 +24,18 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.io.IOException
 
+
 class MainAppActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainAppBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
+    var mServiceIntent: Intent? = null
+    private var mYourService: NotificationService? = null
+
+
     companion object {
-        var countryCode: String = "ro"
+        var countryCode: String = "us"
         lateinit var brokenImageDrawable: Drawable
         lateinit var preferences: SharedPreferences
     }
@@ -59,7 +68,21 @@ class MainAppActivity : AppCompatActivity() {
         brokenImageDrawable = ContextCompat.getDrawable(this, R.drawable.ic_outline_broken_image_24)!!
         preferences = this.getPreferences(MODE_PRIVATE)
 
-//        getLastKnownLocation()
+        getLastKnownLocation()
+
+
+        mYourService = NotificationService()
+        mServiceIntent = Intent(this, NotificationService::class.java)
+        if (isMyServiceRunning(NotificationService::class.java)) {
+//            startService(mServiceIntent)
+            stopService(mServiceIntent)
+        }
+
+//        if (!isMyServiceRunning(NotificationService::class.java)) {
+//            startService(mServiceIntent)
+////            stopService(mServiceIntent)
+//        }
+
     }
 
     private fun getLastKnownLocation() {
@@ -71,15 +94,9 @@ class MainAppActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return
         }
+
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location ->
                 if (location != null) {
@@ -101,5 +118,33 @@ class MainAppActivity : AppCompatActivity() {
                     }
                 }
             }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in manager.getRunningServices(Int.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                Log.i("Service status", "Running")
+                return true
+            }
+        }
+        Log.i("Service status", "Not running")
+        return false
+    }
+
+
+    override fun onDestroy() {
+        if (!isMyServiceRunning(NotificationService::class.java)) {
+            startService(mServiceIntent)
+        }
+
+        val broadcastIntent = Intent()
+        Log.i("Service status", "restarting")
+
+        broadcastIntent.action = "restartservice"
+        broadcastIntent.setClass(this, RestartManager::class.java)
+        this.sendBroadcast(broadcastIntent)
+        super.onDestroy()
     }
 }

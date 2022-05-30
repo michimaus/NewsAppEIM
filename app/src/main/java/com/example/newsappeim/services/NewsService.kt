@@ -19,7 +19,7 @@ var TAG: String = "NewsService"
 
 interface NewsService {
 
-    @GET("news?apikey=pub_6783a52d4e171eb4b5981530303223ea168c&language=en&category=top")
+    @GET("news?apikey=pub_6783a52d4e171eb4b5981530303223ea168c&category=top")
     suspend fun getLatest(@Query("country") address: String): Response<ListOfNewsModel>
 
     companion object {
@@ -31,11 +31,11 @@ interface NewsService {
             if (newsService == null) {
 
 //                ROMANIA GOT NO NEWS!!!
-//                myMap["country"] = "us"
-//                if (MainAppActivity.countryCode.isNotEmpty()) {
-//                    myMap["country"] = MainAppActivity.countryCode.lowercase(Locale.getDefault())
-//                    countryCode = MainAppActivity.countryCode.lowercase(Locale.getDefault())
-//                }
+                myMap["country"] = "us"
+                if (MainAppActivity.countryCode.isNotEmpty()) {
+                    myMap["country"] = MainAppActivity.countryCode.lowercase(Locale.getDefault())
+                    countryCode = MainAppActivity.countryCode.lowercase(Locale.getDefault())
+                }
 
 
                 val retrofit = Retrofit
